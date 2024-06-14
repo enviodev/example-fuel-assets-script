@@ -1,0 +1,426 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@envio-dev/hyperfuel-client':
+        specifier: ^1.2.0
+        version: 1.2.0
+      '@fuel-ts/transactions':
+        specifier: ^0.89.2
+        version: 0.89.2
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.13.0)(typescript@4.9.5)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.13.0
+        version: 20.13.0
+      typescript:
+        specifier: ^4.5.4
+        version: 4.9.5
+
+packages:
+
+  '@cspotcode/source-map-support@0.8.1':
+    resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
+    engines: {node: '>=12'}
+
+  '@envio-dev/hyperfuel-client-darwin-arm64@1.2.0':
+    resolution: {integrity: sha512-WE+S00bpbDI2ayT0MGZGMhrh7EiUlG2cFnDmJCju9+pj4qhpH9gfmDzl9n2FhqLO94XvNIzhKKTH4Rh+2F3W8g==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@envio-dev/hyperfuel-client-linux-arm64-gnu@1.2.0':
+    resolution: {integrity: sha512-vzbJJHdXMjfBtR+2Dd+ffe35CtHU5eJZZNCu1WiWpvhiPpPmaug99VArP8tvHUcB+iwrp0ZQlQ3HB7d09NpdVg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@envio-dev/hyperfuel-client-linux-x64-gnu@1.2.0':
+    resolution: {integrity: sha512-K8QM0Zibc6aM6NHSKs2Sw+RBujqzhPOPE8K6U4nyvhLI/GCm+kXMS+ze9PYJL3U2+VcRJqItdUYLa4Xlc0g6Bw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@envio-dev/hyperfuel-client-linux-x64-musl@1.2.0':
+    resolution: {integrity: sha512-U8UDlIOPoI/jbky26N41pZMbxgVidzQqEe36cOVnyeKscNkPRFNXOaTqR80tEWIr2bsbCf6fWkkE9lg3mrcbGw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@envio-dev/hyperfuel-client-win32-x64-msvc@1.2.0':
+    resolution: {integrity: sha512-3Je/YsNSMHTzh5aJYe+7kaXXmlMEQjvZRM7UsxvjYJ0U3DpqcTFUSoA0ASH807yg5UAOmVWdBB4bLP9gaRPfdQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@envio-dev/hyperfuel-client@1.2.0':
+    resolution: {integrity: sha512-pFC5ApL5R3IDJkVNo4llvSg62QXkh1S6BVOp6lyHvGQQhQbAL8BpYCZ3ToJpK8b+Y6Xa/YV2XAlnp81k+7ticA==}
+    engines: {node: '>= 10'}
+
+  '@fuel-ts/abi-coder@0.89.2':
+    resolution: {integrity: sha512-J7oOwb15pApGSIDqIDEh2Yv0s/UDqWXmcnW9Lov0j+/zU43SzHX984ThHA+HoVlBCVOZcrwQwI2pozYzcgf7ww==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/address@0.89.2':
+    resolution: {integrity: sha512-uFlsRL0B+eDSjKT2sQUK2YrBuBiuhFWkRD/JQ7PDhAjcVFav7uiCNdqfuW+k+kp7eV0l+5hUi0W2w7SD3dqGYA==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/crypto@0.89.2':
+    resolution: {integrity: sha512-DtmL2cs5yf+OL+v5uiH59gMWN7U29N3tgfUp3CdkNL69tDFjRGx9E8mi8IFy5MRNUOlLQubkJ40AMzSFXuYZ8w==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/errors@0.89.2':
+    resolution: {integrity: sha512-b0H7/FvYphRUTdD77s5iDEWIdJS7ZTKTUASIZEeGorWhN2bmo3BFIyIQkY3JGhoGsswDPF8+Mtnru83pMiPToQ==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/hasher@0.89.2':
+    resolution: {integrity: sha512-J9aUZAGlZmwW1gAlYNg0wN73qkXwNEPtbsi0DYxCy3rrebUPcNlYQG50ZG3FAwbqc1UbyaLS+iuKvKWG/h6CiA==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/interfaces@0.89.2':
+    resolution: {integrity: sha512-SPorsch3bmnDgjhsDY+f94tpOwNOWM/SfHEggZS+v6B7mcnUm5PqmVERY/4EP+zsKTETZpys5npcAg0onauwzA==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/math@0.89.2':
+    resolution: {integrity: sha512-L2KIVLHHf70L5aSj9lHXMw15XFqJwPm7LTgHLehCZzRIsKXhP+oOYkb9bJLFh4wVDtYZKgdon1Ywbk/YyR7Drw==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/transactions@0.89.2':
+    resolution: {integrity: sha512-gaoPQwnbMIwp3pOSPuhLaZWHWELPp/QLJms7k18x6UDeOyhammqC+XKZF8nsiIrVj4RjZJiEKO6xlh3VuJPeaA==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/utils@0.89.2':
+    resolution: {integrity: sha512-cp2qQao32HjDysGkDWkEDMvAODWcMJ1YEf+pRMrlY810zYlMDG3BX0RZYli8CNKj45RLT3MMdU/Z9aPvnnB9xA==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+
+  '@fuel-ts/versions@0.89.2':
+    resolution: {integrity: sha512-OcT6rX2LlS8pXN+5mCYql37c70seRI/9vL3eP2wSl1iFEtWbLFZvGyXtgh7v8X1apVJWTMuCYMXJ8OUaf/Fjnw==}
+    engines: {node: ^18.18.2 || ^20.0.0}
+    hasBin: true
+
+  '@jridgewell/resolve-uri@3.1.2':
+    resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
+    engines: {node: '>=6.0.0'}
+
+  '@jridgewell/sourcemap-codec@1.4.15':
+    resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
+
+  '@jridgewell/trace-mapping@0.3.9':
+    resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@noble/hashes@1.4.0':
+    resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
+    engines: {node: '>= 16'}
+
+  '@tsconfig/node10@1.0.11':
+    resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
+
+  '@tsconfig/node12@1.0.11':
+    resolution: {integrity: sha512-cqefuRsh12pWyGsIoBKJA9luFu3mRxCA+ORZvA4ktLSzIuCUtWVxGIuXigEwO5/ywWFMZ2QEGKWvkZG1zDMTag==}
+
+  '@tsconfig/node14@1.0.3':
+    resolution: {integrity: sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==}
+
+  '@tsconfig/node16@1.0.4':
+    resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
+
+  '@types/bn.js@5.1.5':
+    resolution: {integrity: sha512-V46N0zwKRF5Q00AZ6hWtN0T8gGmDUaUzLWQvHFo5yThtVwK/VCenFY3wXVbOvNfajEpsTfQM4IN9k/d6gUVX3A==}
+
+  '@types/node@20.13.0':
+    resolution: {integrity: sha512-FM6AOb3khNkNIXPnHFDYaHerSv8uN22C91z098AnGccVu+Pcdhi+pNUFDi0iLmPIsVE0JBD0KVS7mzUYt4nRzQ==}
+
+  acorn-walk@8.3.2:
+    resolution: {integrity: sha512-cjkyv4OtNCIeqhHrfS81QWXoCBPExR/J62oyEqepVw8WaQeSqpW2uhuLPh1m9eWhDuOo/jUXVTlifvesOWp/4A==}
+    engines: {node: '>=0.4.0'}
+
+  acorn@8.11.3:
+    resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
+  ansi-styles@4.3.0:
+    resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
+    engines: {node: '>=8'}
+
+  arg@4.1.3:
+    resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
+
+  bech32@2.0.0:
+    resolution: {integrity: sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==}
+
+  bn.js@5.2.1:
+    resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
+
+  chalk@4.1.2:
+    resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
+    engines: {node: '>=10'}
+
+  cli-table@0.3.11:
+    resolution: {integrity: sha512-IqLQi4lO0nIB4tcdTpN4LCB9FI3uqrJZK7RC515EnhZ6qBaglkIgICb1wjeAqpdoOabm1+SuQtkXIPdYC93jhQ==}
+    engines: {node: '>= 0.2.0'}
+
+  color-convert@2.0.1:
+    resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
+    engines: {node: '>=7.0.0'}
+
+  color-name@1.1.4:
+    resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  colors@1.0.3:
+    resolution: {integrity: sha512-pFGrxThWcWQ2MsAz6RtgeWe4NK2kUE1WfsrvvlctdII745EW9I0yflqhe7++M5LEc7bV2c/9/5zc8sFcpL0Drw==}
+    engines: {node: '>=0.1.90'}
+
+  create-require@1.1.1:
+    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
+  diff@4.0.2:
+    resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
+    engines: {node: '>=0.3.1'}
+
+  has-flag@4.0.0:
+    resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
+    engines: {node: '>=8'}
+
+  make-error@1.3.6:
+    resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
+
+  supports-color@7.2.0:
+    resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
+    engines: {node: '>=8'}
+
+  ts-node@10.9.2:
+    resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+
+  type-fest@3.13.1:
+    resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
+    engines: {node: '>=14.16'}
+
+  typescript@4.9.5:
+    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+
+  undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
+  v8-compile-cache-lib@3.0.1:
+    resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
+
+  yn@3.1.1:
+    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
+    engines: {node: '>=6'}
+
+snapshots:
+
+  '@cspotcode/source-map-support@0.8.1':
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.9
+
+  '@envio-dev/hyperfuel-client-darwin-arm64@1.2.0':
+    optional: true
+
+  '@envio-dev/hyperfuel-client-linux-arm64-gnu@1.2.0':
+    optional: true
+
+  '@envio-dev/hyperfuel-client-linux-x64-gnu@1.2.0':
+    optional: true
+
+  '@envio-dev/hyperfuel-client-linux-x64-musl@1.2.0':
+    optional: true
+
+  '@envio-dev/hyperfuel-client-win32-x64-msvc@1.2.0':
+    optional: true
+
+  '@envio-dev/hyperfuel-client@1.2.0':
+    optionalDependencies:
+      '@envio-dev/hyperfuel-client-darwin-arm64': 1.2.0
+      '@envio-dev/hyperfuel-client-linux-arm64-gnu': 1.2.0
+      '@envio-dev/hyperfuel-client-linux-x64-gnu': 1.2.0
+      '@envio-dev/hyperfuel-client-linux-x64-musl': 1.2.0
+      '@envio-dev/hyperfuel-client-win32-x64-msvc': 1.2.0
+
+  '@fuel-ts/abi-coder@0.89.2':
+    dependencies:
+      '@fuel-ts/crypto': 0.89.2
+      '@fuel-ts/errors': 0.89.2
+      '@fuel-ts/hasher': 0.89.2
+      '@fuel-ts/interfaces': 0.89.2
+      '@fuel-ts/math': 0.89.2
+      '@fuel-ts/utils': 0.89.2
+      type-fest: 3.13.1
+
+  '@fuel-ts/address@0.89.2':
+    dependencies:
+      '@fuel-ts/crypto': 0.89.2
+      '@fuel-ts/errors': 0.89.2
+      '@fuel-ts/interfaces': 0.89.2
+      '@fuel-ts/utils': 0.89.2
+      '@noble/hashes': 1.4.0
+      bech32: 2.0.0
+
+  '@fuel-ts/crypto@0.89.2':
+    dependencies:
+      '@fuel-ts/errors': 0.89.2
+      '@fuel-ts/interfaces': 0.89.2
+      '@fuel-ts/math': 0.89.2
+      '@fuel-ts/utils': 0.89.2
+      '@noble/hashes': 1.4.0
+
+  '@fuel-ts/errors@0.89.2':
+    dependencies:
+      '@fuel-ts/versions': 0.89.2
+
+  '@fuel-ts/hasher@0.89.2':
+    dependencies:
+      '@fuel-ts/crypto': 0.89.2
+      '@fuel-ts/interfaces': 0.89.2
+      '@fuel-ts/utils': 0.89.2
+      '@noble/hashes': 1.4.0
+
+  '@fuel-ts/interfaces@0.89.2': {}
+
+  '@fuel-ts/math@0.89.2':
+    dependencies:
+      '@fuel-ts/errors': 0.89.2
+      '@types/bn.js': 5.1.5
+      bn.js: 5.2.1
+
+  '@fuel-ts/transactions@0.89.2':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.89.2
+      '@fuel-ts/address': 0.89.2
+      '@fuel-ts/errors': 0.89.2
+      '@fuel-ts/hasher': 0.89.2
+      '@fuel-ts/interfaces': 0.89.2
+      '@fuel-ts/math': 0.89.2
+      '@fuel-ts/utils': 0.89.2
+
+  '@fuel-ts/utils@0.89.2':
+    dependencies:
+      '@fuel-ts/errors': 0.89.2
+      '@fuel-ts/interfaces': 0.89.2
+      '@fuel-ts/math': 0.89.2
+      '@fuel-ts/versions': 0.89.2
+
+  '@fuel-ts/versions@0.89.2':
+    dependencies:
+      chalk: 4.1.2
+      cli-table: 0.3.11
+
+  '@jridgewell/resolve-uri@3.1.2': {}
+
+  '@jridgewell/sourcemap-codec@1.4.15': {}
+
+  '@jridgewell/trace-mapping@0.3.9':
+    dependencies:
+      '@jridgewell/resolve-uri': 3.1.2
+      '@jridgewell/sourcemap-codec': 1.4.15
+
+  '@noble/hashes@1.4.0': {}
+
+  '@tsconfig/node10@1.0.11': {}
+
+  '@tsconfig/node12@1.0.11': {}
+
+  '@tsconfig/node14@1.0.3': {}
+
+  '@tsconfig/node16@1.0.4': {}
+
+  '@types/bn.js@5.1.5':
+    dependencies:
+      '@types/node': 20.13.0
+
+  '@types/node@20.13.0':
+    dependencies:
+      undici-types: 5.26.5
+
+  acorn-walk@8.3.2: {}
+
+  acorn@8.11.3: {}
+
+  ansi-styles@4.3.0:
+    dependencies:
+      color-convert: 2.0.1
+
+  arg@4.1.3: {}
+
+  bech32@2.0.0: {}
+
+  bn.js@5.2.1: {}
+
+  chalk@4.1.2:
+    dependencies:
+      ansi-styles: 4.3.0
+      supports-color: 7.2.0
+
+  cli-table@0.3.11:
+    dependencies:
+      colors: 1.0.3
+
+  color-convert@2.0.1:
+    dependencies:
+      color-name: 1.1.4
+
+  color-name@1.1.4: {}
+
+  colors@1.0.3: {}
+
+  create-require@1.1.1: {}
+
+  diff@4.0.2: {}
+
+  has-flag@4.0.0: {}
+
+  make-error@1.3.6: {}
+
+  supports-color@7.2.0:
+    dependencies:
+      has-flag: 4.0.0
+
+  ts-node@10.9.2(@types/node@20.13.0)(typescript@4.9.5):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.11
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 20.13.0
+      acorn: 8.11.3
+      acorn-walk: 8.3.2
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.9.5
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+
+  type-fest@3.13.1: {}
+
+  typescript@4.9.5: {}
+
+  undici-types@5.26.5: {}
+
+  v8-compile-cache-lib@3.0.1: {}
+
+  yn@3.1.1: {}
