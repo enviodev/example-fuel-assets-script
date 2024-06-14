@@ -19,6 +19,7 @@ async function main() {
 
   // The query to run
   const makeQuery = (fromBlock: number) => {
+    // for docs on how this query works and where the fields come from, see: https://docs.envio.dev/docs/hyperfuel-query
     return {
       fromBlock: fromBlock,
       "receipts": [
