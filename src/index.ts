@@ -49,14 +49,15 @@ async function main() {
   };
 
 
-  let height = 999999999; // a large number, we'll reset this value regardless.
+  let height = 1219600; // A smaller number for testing.
+  // let height = 999999999; // a large number, we'll reset this value regardless.
 
-  // Fetch the current block height.
-  //   do this asynchronously so the script is faster
-  client.getHeight().then((block) => {
-    // Set this asyncronously so that the script is still fast.
-    height = block;
-  });
+  // // Fetch the current block height.
+  // //   do this asynchronously so the script is faster
+  // client.getHeight().then((block) => {
+  //   // Set this asyncronously so that the script is still fast.
+  //   height = block;
+  // });
 
   console.log("Running the query...");
   const tokenAssets: {
@@ -92,6 +93,15 @@ async function main() {
 
     for (const receipt of result.data.receipts) {
       const { toAddress, to, val, amount, receiptType, recipient, rootContractId, subId, assetId } = receipt;
+
+      if (receipt.txId == "0x241203072ffc6c091a3072ae7e0073d13880b53ed5e7a97d18eb2b2d9300ecc7" && rootContractId == "0x3550c53890db64a241d3cc6523d4255a9c588c4bd8503f911a39444989626626") {
+        console.log("This is the MINT of tha 'bad' asset. It happens at block #1219561 here - https://app.fuel.network/tx/0x241203072ffc6c091a3072ae7e0073d13880b53ed5e7a97d18eb2b2d9300ecc7/simple");
+        console.log(receipt);
+      }
+      if (receipt.txId == "0x3fa1fe1519362025fe17096b681765156934634a3b2440bf5734ab1aabb983f2" && rootContractId == "0x3550c53890db64a241d3cc6523d4255a9c588c4bd8503f911a39444989626626") {
+        console.log("We have a BURN of the bad asset. It happens at block #1219575 here - https://app.fuel.network/tx/0x3fa1fe1519362025fe17096b681765156934634a3b2440bf5734ab1aabb983f2/simple");
+        console.log(receipt);
+      }
 
       if (receiptType === 11) {
         if (val == undefined || rootContractId == undefined || subId == undefined) {
@@ -246,22 +256,22 @@ async function main() {
     }
   }
 
-  console.timeEnd("Script Execution Time");
-
-  console.log("Token Summary:");
-  for (const [contractAddress, assetIdsFromContract] of Object.entries(mintingContract)) {
-    console.log(`Minting Contract: ${contractAddress}`);
-
-    for (const assetId of assetIdsFromContract) {
-      const asset = tokenAssets[assetId];
-      if (!asset) {
-        throw new Error("Asset not found, logic error mismatch between contractAssets and tokenAssets objects");
-      }
-      console.log(`  - Sub ID: ${asset.subId}`);
-      console.log(`    Asset ID: ${assetId}`);
-      console.log(`    Supply: ${asset.supply}`);
-    }
-  }
+  // console.timeEnd("Script Execution Time");
+  //
+  // console.log("Token Summary:");
+  // for (const [contractAddress, assetIdsFromContract] of Object.entries(mintingContract)) {
+  //   console.log(`Minting Contract: ${contractAddress}`);
+  //
+  //   for (const assetId of assetIdsFromContract) {
+  //     const asset = tokenAssets[assetId];
+  //     if (!asset) {
+  //       throw new Error("Asset not found, logic error mismatch between contractAssets and tokenAssets objects");
+  //     }
+  //     console.log(`  - Sub ID: ${asset.subId}`);
+  //     console.log(`    Asset ID: ${assetId}`);
+  //     console.log(`    Supply: ${asset.supply}`);
+  //   }
+  // }
 }
 
 main();
