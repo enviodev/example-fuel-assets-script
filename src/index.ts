@@ -4,9 +4,6 @@ import {
 } from "./config";
 import { getMintedAssetId } from "@fuel-ts/transactions"
 
-const transferEventSigHash =
-  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-
 async function main() {
   console.time("Script Execution Time");
 
@@ -24,8 +21,7 @@ async function main() {
       fromBlock: fromBlock,
       "receipts": [
         {
-          // "receiptType": [7, 8, 11, 12] // Removing Transfer and TransferOut for now since it is unclear how to get tho from/sender address
-          "receiptType": [11, 12]
+          "receiptType": [7, 8, 11, 12] // Removing Transfer and TransferOut for now since it is unclear how to get tho from/sender address
         }
       ],
       "fieldSelection": {
@@ -64,6 +60,7 @@ async function main() {
       subId: string;
       mintingContract: string;
       supply: bigint;
+      currentOwner: string;
       owners: {
         [address: string]: {
           in: bigint;
@@ -74,6 +71,13 @@ async function main() {
       }
     }
   } = {};
+
+  /// TODO: could add an owner lookup.
+  // const tokenOwners: {
+  //   [address: string]: {
+  //     [assetId: string]: boolean;
+  //   }
+  // } = {};
 
   const mintingContract: { [contractAddress: string]: Array<string> } = {};
 
@@ -111,6 +115,7 @@ async function main() {
             subId: subId,
             supply: val,
             mintingContract: rootContractId,
+            currentOwner: rootContractId,
             owners: {}
           }
         }
@@ -164,9 +169,8 @@ async function main() {
           count_out: recipient.count_out + 1
         }
       } else if (receiptType === 7) {
-        // UNUSED code - still buggy.
         // Handle Transfer receipts
-        if (amount == undefined || assetId == undefined || to == undefined || rootContractId == undefined) {
+        if (amount == undefined || assetId == undefined || to == undefined) {
           console.log(receipt);
           throw new Error("Malformed response from HyperFuel of type Transfer, required field cannot be undefined");
         }
@@ -176,11 +180,17 @@ async function main() {
           continue; // Ignore transfers for assets that were not minted
         }
 
+        if (asset.supply != 1n) {
+          continue; // Don't process transfers for fungible tokens
+        }
+
+        const previousOwner = asset.currentOwner;
+        asset.currentOwner = to;
+
         // Update recipient information
-        const recipientData = asset.owners[to];
-        if (recipientData) {
-          recipientData.in += amount;
-          recipientData.count_in += 1;
+        if (asset.owners[to]) {
+          asset.owners[to].in += amount;
+          asset.owners[to].count_in += 1;
         } else {
           asset.owners[to] = {
             in: amount,
@@ -191,12 +201,12 @@ async function main() {
         }
 
         // Update sender information
-        const senderData = asset.owners[rootContractId];
+        const senderData = asset.owners[previousOwner];
         if (senderData) {
           senderData.out += amount;
           senderData.count_out += 1;
         } else {
-          asset.owners[rootContractId] = {
+          asset.owners[previousOwner] = {
             in: BigInt(0),
             out: amount,
             count_in: 0,
@@ -204,9 +214,8 @@ async function main() {
           }
         }
       } else if (receiptType === 8) {
-        // UNUSED code - still buggy.
         // Handle TransferOut receipts
-        if (amount == undefined || assetId == undefined || toAddress == undefined || rootContractId == undefined) {
+        if (amount == undefined || assetId == undefined || toAddress == undefined) {
           throw new Error("Malformed response from HyperFuel of type TransferOut, required field cannot be undefined");
         }
 
@@ -215,11 +224,17 @@ async function main() {
           continue; // Ignore transfers for assets that were not minted
         }
 
+        if (asset.supply != 1n) {
+          continue; // Don't process transfers for fungible tokens
+        }
+
+        const previousOwner = asset.currentOwner;
+        asset.currentOwner = toAddress;
+
         // Update recipient information
-        const recipientData = asset.owners[toAddress];
-        if (recipientData) {
-          recipientData.in += amount;
-          recipientData.count_in += 1;
+        if (asset.owners[toAddress]) {
+          asset.owners[toAddress].in += amount;
+          asset.owners[toAddress].count_in += 1;
         } else {
           asset.owners[toAddress] = {
             in: amount,
@@ -230,12 +245,12 @@ async function main() {
         }
 
         // Update sender information
-        const senderData = asset.owners[rootContractId];
+        const senderData = asset.owners[previousOwner];
         if (senderData) {
           senderData.out += amount;
           senderData.count_out += 1;
         } else {
-          asset.owners[rootContractId] = {
+          asset.owners[previousOwner] = {
             in: BigInt(0),
             out: amount,
             count_in: 0,
@@ -254,12 +269,15 @@ async function main() {
 
     for (const assetId of assetIdsFromContract) {
       const asset = tokenAssets[assetId];
+      if (asset.supply != 1n) continue; // Skip fungible+burnt tokens
+
       if (!asset) {
         throw new Error("Asset not found, logic error mismatch between contractAssets and tokenAssets objects");
       }
       console.log(`  - Sub ID: ${asset.subId}`);
       console.log(`    Asset ID: ${assetId}`);
-      console.log(`    Supply: ${asset.supply}`);
+      console.log(`    Current Owner: ${asset.currentOwner}`);
+      // console.log(`    Supply: ${asset.supply}`);
     }
   }
 }
