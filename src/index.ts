@@ -113,6 +113,18 @@ async function main() {
           out: bigint;
           count_in: number;
           count_out: number;
+          last_balance_transaction: string;
+        }
+      }
+    }
+  } = {};
+
+  const transaction_balances: {
+    [address: string]: {
+      [asset_id: string]: {
+        [transaction: string]: {
+          balance: bigint;
+          last_balance_change_transaction_id: string;
         }
       }
     }
@@ -187,7 +199,7 @@ async function main() {
     for (const receipt of result.data.receipts) {
       const { txId, toAddress, to, val, amount, receiptType, recipient, rootContractId, subId, assetId } = receipt;
 
-      if (receiptType === 11) {
+      if (receiptType === 11) { // MINT
         if (val == undefined || rootContractId == undefined || subId == undefined) {
           throw new Error("Malformed response from HyperFuel, required field cannot be undefined");
         }
@@ -213,12 +225,43 @@ async function main() {
         if (recipient) {
           asset.owners[rootContractId]["in"] = recipient.in + val;
           asset.owners[rootContractId]["count_in"] = recipient.count_in + 1;
+          const usersBalances = transaction_balances[rootContractId][assetId];
+
+          if (usersBalances == undefined) throw new Error("User balance not found");
+
+          const previousBalanceChange = usersBalances[recipient.last_balance_transaction];
+
+          if (usersBalances == undefined) throw new Error("User previous balance not found");
+
+          usersBalances[txId] = {
+            balance: previousBalanceChange.balance + val,
+            last_balance_change_transaction_id: recipient.last_balance_transaction
+          };
+
+          if (usersBalances[txId].balance != (recipient.in - recipient.out)) throw new Error("Bad user balance math");
         } else {
           asset.owners[rootContractId] = {
             in: val,
             out: BigInt(0),
             count_in: 1,
-            count_out: 0
+            count_out: 0,
+            last_balance_transaction: txId
+          }
+
+          const newUsersBalance = {
+            balance: val,
+            last_balance_change_transaction_id: "NONE"
+          };
+
+          const user = transaction_balances[rootContractId] || {};
+          const userAsset = user[assetId] || {};
+
+          transaction_balances[rootContractId] = {
+            ...user,
+            [assetId]: {
+              ...userAsset,
+              [txId]: newUsersBalance
+            }
           }
         }
 
@@ -237,6 +280,8 @@ async function main() {
         if (!asset) {
           // search all assets to find the same subId
           throw new Error(`Burn event for an asset that was not minted - assetId: ${assetId}, subId: ${subId} from contract: ${rootContractId} - this happened at transaction ${receipt.txId} `)
+
+
         }
 
         asset.supply = asset.supply - val;
@@ -251,8 +296,24 @@ async function main() {
           in: recipient.in,
           out: recipient.out + val,
           count_in: recipient.count_in,
-          count_out: recipient.count_out + 1
+          count_out: recipient.count_out + 1,
+          last_balance_transaction: ""
         }
+
+        const usersBalances = transaction_balances[rootContractId][assetId];
+
+        if (usersBalances == undefined) throw new Error("User balance not found in burn");
+
+        const previousBalanceChange = usersBalances[recipient.last_balance_transaction];
+
+        if (usersBalances == undefined) throw new Error("User previous balance not found in burn");
+
+        usersBalances[txId] = {
+          balance: previousBalanceChange.balance - val,
+          last_balance_change_transaction_id: recipient.last_balance_transaction
+        };
+
+        if (usersBalances[txId].balance != (recipient.in - recipient.out)) throw new Error("Bad user balance math in burn");
       } else if (receiptType === 7) {
         // UNUSED code - still buggy.
         // Handle Transfer receipts
@@ -421,7 +482,8 @@ async function main() {
                         in: BigInt(0),
                         out: BigInt(0),
                         count_in: 0,
-                        count_out: 0
+                        count_out: 0,
+                        last_balance_transaction: ""
                       };
                     }
                     if (!tokenAssets[assetId].owners[recipientAddress]) {
@@ -429,7 +491,8 @@ async function main() {
                         in: BigInt(0),
                         out: BigInt(0),
                         count_in: 0,
-                        count_out: 0
+                        count_out: 0,
+                        last_balance_transaction: ""
                       };
                     }
 
@@ -462,7 +525,8 @@ async function main() {
             in: amount,
             out: BigInt(0),
             count_in: 1,
-            count_out: 0
+            count_out: 0,
+            last_balance_transaction: ""
           }
         }
 
@@ -515,7 +579,8 @@ async function main() {
             in: amount,
             out: BigInt(0),
             count_in: 1,
-            count_out: 0
+            count_out: 0,
+            last_balance_transaction: ""
           }
         }
 
@@ -529,7 +594,8 @@ async function main() {
             in: BigInt(0),
             out: amount,
             count_in: 0,
-            count_out: 1
+            count_out: 1,
+            last_balance_transaction: ""
           }
         }
       }
