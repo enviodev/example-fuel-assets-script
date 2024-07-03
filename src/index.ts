@@ -3,6 +3,7 @@ import {
   hyperFuelEndpoint,
 } from "./config";
 import { getMintedAssetId } from "@fuel-ts/transactions"
+import { createInputsMap, createOutputsMap, inputsMapType, outputsMapType } from "./util";
 
 async function main() {
   console.time("Script Execution Time");
@@ -21,16 +22,19 @@ async function main() {
       fromBlock: fromBlock,
       "receipts": [
         {
-          "receiptType": [7, 8, 11, 12] // Removing Transfer and TransferOut for now since it is unclear how to get tho from/sender address
+          "receiptType": [7, 8, 11, 12], // Removing Transfer and TransferOut for now since it is unclear how to get tho from/sender address
+          "txStatus": [1] // only query for successful transactions
           // "receiptType": [11, 12]
         }
       ],
       "inputs": [{
         "inputType": [0 /* inputCoin */],
+        "txStatus": [1] // only query for successful transactions
         // "tx_type": [0] // TODO: maybe can make this more efficient by filtering by tx_type
       }],
       "outputs": [{
-        "outputType": [0 /* coinOutput */, 2 /* the change output is needed for calculating any unspent gas */]
+        "outputType": [0 /* coinOutput */, 2 /* the change output is needed for calculating any unspent gas */],
+        "txStatus": [1] // only query for successful transactions
         // "tx_type": [0] // TODO: maybe can make this more efficient by filtering by tx_type
       }],
       "fieldSelection": {
@@ -51,41 +55,41 @@ async function main() {
         ],
         "input": [
           "tx_id",
-          "tx_status",
-          // "tx_type",
-          "block_height",
-          "input_type",
-          "utxo_id",
+          // "tx_status",// unused currently
+          // // "tx_type",// unused currently
+          // "block_height",// unused currently
+          // "input_type",// unused currently
+          // "utxo_id",// unused currently
           "owner",
           "amount",
           "asset_id",
-          "tx_pointer_block_height",
-          "tx_pointer_tx_index",
-          "witness_index",
-          "predicate_gas_used",
-          "predicate",
-          "predicate_data",
-          "balance_root",
-          "state_root",
-          "contract",
-          "sender",
-          "recipient",
-          "nonce",
-          "data"
+          // "tx_pointer_block_height",// unused currently
+          // "tx_pointer_tx_index",// unused currently
+          // "witness_index",// unused currently
+          // "predicate_gas_used",// unused currently
+          // "predicate",// unused currently
+          // "predicate_data",// unused currently
+          // "balance_root",// unused currently
+          // "state_root",// unused currently
+          // "contract",// unused currently
+          // "sender",// unused currently
+          // "recipient",// unused currently
+          // "nonce",// unused currently
+          // "data"// unused currently
         ],
         "output": [
           "tx_id",
-          "tx_status",
-          // "tx_type",
-          "block_height",
-          "output_type",
+          // "tx_status",// unused currently
+          // // "tx_type",// unused currently
+          // "block_height",// unused currently
+          // "output_type",// unused currently
           "to",
           "amount",
           "asset_id",
-          "input_index",
-          "balance_root",
-          "state_root",
-          "contract",
+          // "input_index", // unused currently
+          // "balance_root",// unused currently
+          // "state_root",// unused currently
+          // "contract",// unused currently
         ]
       }
     }
@@ -145,56 +149,8 @@ async function main() {
 
     fromBlock = result.nextBlock;
 
-    const inputsMap: {
-      [txId: string]: {
-        [assetId: string]: {
-          [ownerAddress: string]: [{
-            txId: string,
-            txStatus: number,
-            txType: number,
-            blockHeight: number,
-            inputType: number,
-            utxoId: string,
-            owner: string | undefined,
-            amount: bigint,
-            assetId: string,
-            txPointerBlockHeight: number,
-            txPointerTxIndex: number,
-            witnessIndex: number,
-            predicateGasUsed: number,
-            predicate: string,
-            predicateData: string,
-            balanceRoot: string,
-            stateRoot: string,
-            contract: string,
-            sender: string,
-            recipient: string,
-            nonce: string,
-            data: string
-          }]
-        }
-      }
-    } = {};
-    const outputsMap: {
-      [txId: string]: {
-        [assetId: string]: {
-          [ownerAddress: string]: [{
-            txId: string,
-            txStatus: number,
-            txType: number,
-            blockHeight: number,
-            outputType: number,
-            to: string,
-            amount: bigint,
-            assetId: string,
-            inputIndex: number,
-            balanceRoot: string,
-            stateRoot: string,
-            contract: string,
-          }]
-        }
-      }
-    } = {};
+    let inputsMap: inputsMapType = {};
+    let outputsMap: outputsMapType = {};
 
     for (const receipt of result.data.receipts) {
       const { txId, toAddress, to, val, amount, receiptType, recipient, rootContractId, subId, assetId } = receipt;
@@ -229,9 +185,13 @@ async function main() {
 
           if (usersBalances == undefined) throw new Error("User balance not found");
 
+          if (recipient.last_balance_transaction == "NOT SET YET") {
+            continue
+          }
           const previousBalanceChange = usersBalances[recipient.last_balance_transaction];
 
-          if (usersBalances == undefined) throw new Error("User previous balance not found");
+
+          if (previousBalanceChange == undefined) throw new Error(`User previous balance not found. last change tx ${recipient.last_balance_transaction}, assetId: ${assetId}, user: ${rootContractId}`);
 
           usersBalances[txId] = {
             balance: previousBalanceChange.balance + val,
@@ -240,6 +200,7 @@ async function main() {
 
           if (usersBalances[txId].balance != (recipient.in - recipient.out)) throw new Error("Bad user balance math");
         } else {
+
           asset.owners[rootContractId] = {
             in: val,
             out: BigInt(0),
@@ -266,7 +227,8 @@ async function main() {
         }
 
         tokenAssets[assetId] = asset;
-      } else if (receiptType === 12) {
+
+      } else if (receiptType === 12) { // BURN
 
         // type 12 is a burn, so we need to subtract the value from the supply and do the reverse of the mint (11)
         if (val == undefined || rootContractId == undefined || subId == undefined) {
@@ -297,7 +259,7 @@ async function main() {
           out: recipient.out + val,
           count_in: recipient.count_in,
           count_out: recipient.count_out + 1,
-          last_balance_transaction: ""
+          last_balance_transaction: "NOT SET YET"
         }
 
         const usersBalances = transaction_balances[rootContractId][assetId];
@@ -315,7 +277,6 @@ async function main() {
 
         if (usersBalances[txId].balance != (recipient.in - recipient.out)) throw new Error("Bad user balance math in burn");
       } else if (receiptType === 7) {
-        // UNUSED code - still buggy.
         // Handle Transfer receipts
         if (amount == undefined || assetId == undefined || to == undefined) {
           console.log(receipt);
@@ -325,184 +286,91 @@ async function main() {
         if (rootContractId == undefined) {
           // This means this transfer is in a script, predicate or EOA. We need to look at the inputs/outputs of the transaction.
           if (inputsMap[txId] == undefined) {
-            inputsMap[txId] = {};
-            for (const input of result.data.inputs) {
-              const { assetId, owner } = input;
-              if (assetId == undefined || owner == undefined) {
-                throw new Error("Malformed response from HyperFuel of type input, required fields cannot be undefined");
-              }
-              if (input.txId === txId) {
-                if (!inputsMap[txId][assetId]) {
-                  inputsMap[txId][assetId] = {};
-                }
-                if (!inputsMap[txId][assetId][owner]) {
-                  inputsMap[txId][assetId][owner] = [] as any;
-                }
-
-                const {
-                  txStatus
-                  , txType
-                  , blockHeight
-                  , inputType
-                  , utxoId
-                  // , owner
-                  , amount
-                  // , assetId
-                  , txPointerBlockHeight
-                  , txPointerTxIndex
-                  , witnessIndex
-                  , predicateGasUsed
-                  , predicate
-                  , predicateData
-                  , balanceRoot
-                  , stateRoot
-                  , contract
-                  , sender
-                  , recipient
-                  , nonce
-                  , data
-                } = input
-
-
-                if (utxoId != undefined &&
-                  amount != undefined &&
-                  utxoId != undefined &&
-                  txPointerBlockHeight != undefined &&
-                  txPointerTxIndex != undefined &&
-                  witnessIndex != undefined &&
-                  predicateGasUsed != undefined &&
-                  predicate != undefined &&
-                  predicateData != undefined &&
-                  balanceRoot != undefined &&
-                  stateRoot != undefined &&
-                  contract != undefined &&
-                  sender != undefined &&
-                  recipient != undefined &&
-                  nonce != undefined &&
-                  data != undefined
-                ) {
-                  inputsMap[txId][assetId][owner].push({
-                    txId,
-                    txStatus
-                    , txType
-                    , blockHeight
-                    , inputType
-                    , owner
-                    , assetId
-                    , utxoId
-                    , amount
-                    , txPointerBlockHeight
-                    , txPointerTxIndex
-                    , witnessIndex
-                    , predicateGasUsed
-                    , predicate
-                    , predicateData
-                    , balanceRoot
-                    , stateRoot
-                    , contract
-                    , sender
-                    , recipient
-                    , nonce
-                    , data
-                  });
-                }
-              }
-            }
+            inputsMap = createInputsMap(result.data.inputs);
+            if (inputsMap[txId] == undefined) throw new Error("Inputs map not created");
           }
 
           if (outputsMap[txId] == undefined) {
-            outputsMap[txId] = {};
-            for (const output of result.data.outputs) {
-              const {
-                txId,
-                txStatus,
-                txType,
-                blockHeight,
-                outputType,
-                to,
-                amount,
-                assetId,
-                inputIndex,
-                balanceRoot,
-                stateRoot,
-                contract
-              } = output
-              if (txId != undefined &&
-                txStatus != undefined &&
-                txType != undefined &&
-                blockHeight != undefined &&
-                outputType != undefined &&
-                to != undefined &&
-                amount != undefined &&
-                assetId != undefined &&
-                inputIndex != undefined &&
-                balanceRoot != undefined &&
-                stateRoot != undefined &&
-                contract != undefined
-              ) {
-                if (output.txId === txId) {
-                  if (!outputsMap[txId][assetId]) {
-                    outputsMap[txId][assetId] = {};
+            outputsMap = createOutputsMap(result.data.outputs);
+            if (outputsMap[txId] == undefined) throw new Error("Outputs map not created");
+          }
+
+          // Use the difference between inputs and outputs to determine the 'from address
+          // Calculate the balance changes to determine the sender address.
+          for (const assetId in outputsMap[txId]) {
+            for (const owner in outputsMap[txId][assetId]) {
+              const inputTotal = inputsMap[txId][assetId]?.[owner]?.reduce((sum, input) => sum + input.amount, BigInt(0)) || BigInt(0);
+              const outputTotal = outputsMap[txId][assetId]?.[owner]?.reduce((sum, output) => sum + output.amount, BigInt(0)) || BigInt(0);
+
+              if (inputTotal > outputTotal) {
+                const senderAddress = owner;
+                const recipientAddress = outputsMap[txId][assetId][owner][0]?.to;
+
+                if (senderAddress && recipientAddress) {
+                  if (!tokenAssets[assetId].owners[senderAddress]) {
+                    tokenAssets[assetId].owners[senderAddress] = {
+                      in: BigInt(0),
+                      out: BigInt(0),
+                      count_in: 0,
+                      count_out: 0,
+                      last_balance_transaction: "NOT SET YET"
+                    };
                   }
-                  if (!outputsMap[txId][assetId][to]) {
-                    outputsMap[txId][assetId][to] = [] as any;
+                  if (!tokenAssets[assetId].owners[recipientAddress]) {
+                    tokenAssets[assetId].owners[recipientAddress] = {
+                      in: BigInt(0),
+                      out: BigInt(0),
+                      count_in: 0,
+                      count_out: 0,
+                      last_balance_transaction: "NOT SET YET"
+                    };
                   }
-                  outputsMap[txId][assetId][to].push({
-                    txId,
-                    txStatus,
-                    txType,
-                    blockHeight,
-                    outputType,
-                    to,
-                    amount,
-                    assetId,
-                    inputIndex,
-                    balanceRoot,
-                    stateRoot,
-                    contract,
-                  });
+
+                  tokenAssets[assetId].owners[senderAddress].out += outputTotal;
+                  tokenAssets[assetId].owners[senderAddress].count_out += 1;
+
+                  tokenAssets[assetId].owners[recipientAddress].in += outputTotal;
+                  tokenAssets[assetId].owners[recipientAddress].count_in += 1;
                 }
-              }
-            }
 
-            // Use the difference between inputs and outputs to determine the 'from address
-            // Calculate the balance changes to determine the sender address.
-            for (const assetId in outputsMap[txId]) {
-              for (const owner in outputsMap[txId][assetId]) {
-                const inputTotal = inputsMap[txId][assetId]?.[owner]?.reduce((sum, input) => sum + input.amount, BigInt(0)) || BigInt(0);
-                const outputTotal = outputsMap[txId][assetId]?.[owner]?.reduce((sum, output) => sum + output.amount, BigInt(0)) || BigInt(0);
+                //                 // Use the difference between inputs and outputs to determine the 'from address
+                //                 // Calculate the balance changes to determine the sender address.
+                //                 for (const assetId in outputsMap[txId]) {
+                //                   for (const owner in outputsMap[txId][assetId]) {
+                //                     const inputTotal = inputsMap[txId][assetId]?.[owner]?.reduce((sum, input) => sum + input.amount, BigInt(0)) || BigInt(0);
+                //                     const outputTotal = outputsMap[txId][assetId]?.[owner]?.reduce((sum, output) => sum + output.amount, BigInt(0)) || BigInt(0);
 
-                if (inputTotal > outputTotal) {
-                  const senderAddress = owner;
-                  const recipientAddress = outputsMap[txId][assetId][owner][0]?.to;
+                //                     if (inputTotal > outputTotal) {
+                //                       const senderAddress = owner;
+                //                       const recipientAddress = outputsMap[txId][assetId][owner][0]?.to;
 
-                  if (senderAddress && recipientAddress) {
-                    if (!tokenAssets[assetId].owners[senderAddress]) {
-                      tokenAssets[assetId].owners[senderAddress] = {
-                        in: BigInt(0),
-                        out: BigInt(0),
-                        count_in: 0,
-                        count_out: 0,
-                        last_balance_transaction: ""
-                      };
-                    }
-                    if (!tokenAssets[assetId].owners[recipientAddress]) {
-                      tokenAssets[assetId].owners[recipientAddress] = {
-                        in: BigInt(0),
-                        out: BigInt(0),
-                        count_in: 0,
-                        count_out: 0,
-                        last_balance_transaction: ""
-                      };
-                    }
+                //                       if (senderAddress && recipientAddress) {
+                //                         if (!tokenAssets[assetId].owners[senderAddress]) {
+                //                           tokenAssets[assetId].owners[senderAddress] = {
+                //                             in: BigInt(0),
+                //                             out: BigInt(0),
+                //                             count_in: 0,
+                //                             count_out: 0,
+                //                             last_balance_transaction: ""
+                //                           };
+                //                         }
+                //                         if (!tokenAssets[assetId].owners[recipientAddress]) {
+                //                           tokenAssets[assetId].owners[recipientAddress] = {
+                //                             in: BigInt(0),
+                //                             out: BigInt(0),
+                //                             count_in: 0,
+                //                             count_out: 0,
+                //                             last_balance_transaction: ""
+                //                           };
+                //                         }
 
-                    tokenAssets[assetId].owners[senderAddress].out += outputTotal;
-                    tokenAssets[assetId].owners[senderAddress].count_out += 1;
+                //                         tokenAssets[assetId].owners[senderAddress].out += outputTotal;
+                //                         tokenAssets[assetId].owners[senderAddress].count_out += 1;
 
-                    tokenAssets[assetId].owners[recipientAddress].in += outputTotal;
-                    tokenAssets[assetId].owners[recipientAddress].count_in += 1;
-                  }
-                }
+                //                         tokenAssets[assetId].owners[recipientAddress].in += outputTotal;
+                //                         tokenAssets[assetId].owners[recipientAddress].count_in += 1;
+                //                       }
+                //                     }
               }
             }
           }
@@ -526,7 +394,7 @@ async function main() {
             out: BigInt(0),
             count_in: 1,
             count_out: 0,
-            last_balance_transaction: ""
+            last_balance_transaction: "NOT SET YET"
           }
         }
 
@@ -580,7 +448,7 @@ async function main() {
             out: BigInt(0),
             count_in: 1,
             count_out: 0,
-            last_balance_transaction: ""
+            last_balance_transaction: "NOT SET YET"
           }
         }
 
@@ -595,7 +463,7 @@ async function main() {
             out: amount,
             count_in: 0,
             count_out: 1,
-            last_balance_transaction: ""
+            last_balance_transaction: "NOT SET YET"
           }
         }
       }
