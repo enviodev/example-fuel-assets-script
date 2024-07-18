@@ -52,11 +52,14 @@ export type outputsMapType = {
     }
   }
 };
+/// TODO: don't ignore this!
+const base_asset_id = "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07"
 
 export const createInputsMap = (inputs: Array<Input>): inputsMapType => {
   const inputsMap: inputsMapType = {};
   for (const input of inputs) {
     const { assetId, owner } = input;
+    // if (assetId == base_asset_id) continue;
     if (assetId == undefined || owner == undefined) {
       throw new Error("Malformed response from HyperFuel of type input, required fields cannot be undefined");
     }
@@ -86,6 +89,9 @@ export const createInputsMap = (inputs: Array<Input>): inputsMapType => {
       , txId
     } = input
 
+    if (!inputsMap[txId]) {
+      inputsMap[txId] = {};
+    }
     if (!inputsMap[txId][assetId]) {
       inputsMap[txId][assetId] = {};
     }
@@ -135,6 +141,8 @@ export const createInputsMap = (inputs: Array<Input>): inputsMapType => {
         // , nonce
         // , data
       });
+    } else {
+      throw new Error("Malformed response from HyperFuel of type input, required fields cannot be undefined");
     }
   }
 
@@ -159,6 +167,7 @@ export const createOutputsMap = (outputs: Array<Output>): outputsMapType => {
       // stateRoot,
       // contract
     } = output
+    // if (assetId == base_asset_id) continue;
     if (txId != undefined &&
       // txStatus != undefined &&
       // txType != undefined &&
@@ -172,6 +181,9 @@ export const createOutputsMap = (outputs: Array<Output>): outputsMapType => {
       // stateRoot != undefined &&
       // contract != undefined
     ) {
+      if (!outputsMap[txId]) {
+        outputsMap[txId] = {};
+      }
       if (!outputsMap[txId][assetId]) {
         outputsMap[txId][assetId] = {};
       }
@@ -192,6 +204,8 @@ export const createOutputsMap = (outputs: Array<Output>): outputsMapType => {
         // stateRoot,
         // contract,
       });
+    } else {
+      throw new Error("Malformed response from HyperFuel of type output, required fields cannot be undefined");
     }
   }
 

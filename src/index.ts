@@ -5,6 +5,9 @@ import {
 import { getMintedAssetId } from "@fuel-ts/transactions"
 import { createInputsMap, createOutputsMap, inputsMapType, outputsMapType } from "./util";
 
+// TODO - we have avoided indexing the BASE asset id so far - we need to handle it also.
+const base_asset_id = "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07"
+
 async function main() {
   console.time("Script Execution Time");
 
@@ -161,6 +164,7 @@ async function main() {
         }
 
         const assetId = getMintedAssetId(rootContractId, subId);
+        if (assetId == base_asset_id) continue;
 
         let asset = tokenAssets[assetId];
 
@@ -237,6 +241,8 @@ async function main() {
 
         const assetId = getMintedAssetId(rootContractId, subId);
 
+        if (assetId == base_asset_id) continue;
+
         let asset = tokenAssets[assetId];
 
         if (!asset) {
@@ -259,12 +265,16 @@ async function main() {
           out: recipient.out + val,
           count_in: recipient.count_in,
           count_out: recipient.count_out + 1,
-          last_balance_transaction: "NOT SET YET"
+          last_balance_transaction: txId
         }
 
         const usersBalances = transaction_balances[rootContractId][assetId];
 
         if (usersBalances == undefined) throw new Error("User balance not found in burn");
+
+        if (recipient.last_balance_transaction == "NOT SET YET") {
+          continue
+        }
 
         const previousBalanceChange = usersBalances[recipient.last_balance_transaction];
 
@@ -275,8 +285,10 @@ async function main() {
           last_balance_change_transaction_id: recipient.last_balance_transaction
         };
 
-        if (usersBalances[txId].balance != (recipient.in - recipient.out)) throw new Error("Bad user balance math in burn");
+        if (usersBalances[txId].balance != (recipient.in - recipient.out)) throw new Error(`Bad user balance math in burn. Expected ${recipient.in - recipient.out}, got ${usersBalances[txId].balance}`);
       } else if (receiptType === 7) {
+        if (assetId == base_asset_id) continue;
+
         // Handle Transfer receipts
         if (amount == undefined || assetId == undefined || to == undefined) {
           console.log(receipt);
@@ -412,7 +424,8 @@ async function main() {
         //   }
         // }
       } else if (receiptType === 8) {
-        // UNUSED code - still buggy.
+        if (assetId == base_asset_id) continue;
+
         // Handle TransferOut receipts
         if (amount == undefined || assetId == undefined || toAddress == undefined) {
           throw new Error("Malformed response from HyperFuel of type TransferOut, required field cannot be undefined");
