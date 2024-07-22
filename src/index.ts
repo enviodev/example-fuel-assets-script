@@ -21,7 +21,7 @@ async function main() {
       fromBlock: fromBlock,
       "receipts": [
         {
-          "receiptType": [7, 8, 11, 12] // Removing Transfer and TransferOut for now since it is unclear how to get tho from/sender address
+          "receiptType": [7, 8, 11, 12] // Transfer, TransferOut, Mint, Burn
         }
       ],
       "fieldSelection": {
@@ -97,6 +97,7 @@ async function main() {
     for (const receipt of result.data.receipts) {
       const { toAddress, to, val, amount, receiptType, recipient, rootContractId, subId, assetId } = receipt;
 
+      // Mint
       if (receiptType === 11) {
         if (val == undefined || rootContractId == undefined || subId == undefined) {
           throw new Error("Malformed response from HyperFuel, required field cannot be undefined");
@@ -141,7 +142,7 @@ async function main() {
           throw new Error("Malformed response from HyperFuel, required field cannot be undefined");
         }
 
-        if (rootContractId == "0x3550c53890db64a241d3cc6523d4255a9c588c4bd8503f911a39444989626626") {
+        if (rootContractId == "0x3550c53890db64a241d3cc6523d4255a9c588c4bd8503f911a39444989626626" || rootContractId == "0x20667443791e287f39703462e179904ba106063fd7c16c5188e9a5ba9e6faa78") {
           continue;
         }
 
@@ -265,6 +266,7 @@ async function main() {
 
   console.log("Token Summary:");
   for (const [contractAddress, assetIdsFromContract] of Object.entries(mintingContract)) {
+
     console.log(`Minting Contract: ${contractAddress}`);
 
     for (const assetId of assetIdsFromContract) {
@@ -280,6 +282,9 @@ async function main() {
       // console.log(`    Supply: ${asset.supply}`);
     }
   }
+
+  console.log(`\nProcessed ${assetReceiptsProcessed} asset receipts, up to block ${fromBlock}`);
+
 }
 
 main();
